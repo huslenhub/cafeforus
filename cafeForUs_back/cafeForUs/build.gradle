@@ -1,0 +1,51 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.4.4'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'org.example'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Spring Boot Core
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+
+    // Spring Security
+    implementation("org.springframework.boot:spring-boot-starter-security")
+
+    // JPA
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+
+    // MySQL
+    runtimeOnly("com.mysql:mysql-connector-j")
+
+    // Lombok (코드 줄이기용)
+    compileOnly("org.projectlombok:lombok")
+    annotationProcessor("org.projectlombok:lombok")
+
+    // DevTools (자동 리로드)
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
+
+    // 테스트
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.security:spring-security-test")
+
+    // Swagger 의존성 (springdoc-openapi)
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
