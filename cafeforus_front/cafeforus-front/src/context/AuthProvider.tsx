@@ -1,10 +1,11 @@
-
-import { createContext, useState, ReactNode, useEffect } from 'react';
+// AuthProvider.tsx
+import React, { createContext, useState, ReactNode, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { loginUser, logoutUser, registerUser, checkLogin } from './authUtils'; 
+import { loginUser, logoutUser, registerUser, checkLogin } from './authUtils';
 
 interface AuthContextType {
   user: string | null;
+  role: string | null;
   isAuthenticated: boolean;
   login: (username: string, password: string) => Promise<string>;
   logout: () => Promise<void>;
@@ -13,58 +14,65 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
+// children을 명시적으로 타입을 지정해 줍니다.
+interface AuthProviderProps {
+  children: ReactNode;
+}
+
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<string | null>(null);
+  const [role, setRole] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  // 로그인 상태를 확인하기 위한 useEffect 추가
   useEffect(() => {
     const initializeUser = async () => {
-      const username = await checkLogin();
-      if (username) {
-        setUser(username);
-        localStorage.setItem('user', username);
+      const result = await checkLogin();
+      if (result) {
+        setUser(result.username);
+        setRole(result.role); 
+        localStorage.setItem('user', result.username);
+        localStorage.setItem('role', result.role);
       } else {
         setUser(null);
+        setRole(null);
         localStorage.removeItem('user');
       }
     };
-  
+
     initializeUser();
   }, []);
 
-  // login 함수 수정
   const login = async (username: string, password: string): Promise<string> => {
     try {
-      const loggedInUsername = await loginUser(username, password);
-      setUser(loggedInUsername); 
-      alert(`Welcome ${loggedInUsername}! 로그인 성공!`);
-      navigate('/'); // 홈으로
-      return loggedInUsername;  // username을 반환
+      const { username: loggedInUsername, role: userRole } = await loginUser(username, password);
+      setUser(loggedInUsername);
+      setRole(userRole); 
+
+      alert(`Welcome ${loggedInUsername}! 로그인 성공! \n권한: ${userRole}`);
+      navigate('/');
+      return loggedInUsername;
     } catch (error) {
       alert('로그인 실패!');
-      throw error;  // 오류를 다시 던져서 호출자에게 알림
+      throw error;
     }
   };
 
-
-  // logout
   const logout = async () => {
-    await logoutUser();  
+    await logoutUser();
     setUser(null);
+    setRole(null);
     localStorage.removeItem('user');
     navigate('/login');
   };
 
-  // register
   const register = async (username: string, password: string, email: string) => {
-    return registerUser(username, password, email);  
+    return registerUser(username, password, email);
   };
 
   const isAuthenticated = !!user;
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, login, logout, register }}>
+    <AuthContext.Provider value={{ user, role, isAuthenticated, login, logout, register }}>
       {children}
     </AuthContext.Provider>
   );

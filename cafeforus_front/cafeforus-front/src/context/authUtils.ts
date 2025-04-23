@@ -1,6 +1,7 @@
+
 //authUtils.ts
 // 로그인 함수
-export const loginUser = async (username: string, password: string): Promise<string> => {
+export const loginUser = async (username: string, password: string): Promise<{ username: string; role: string }> => {
     const res = await fetch('/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -9,12 +10,20 @@ export const loginUser = async (username: string, password: string): Promise<str
     });
 
     if (res.ok) {
-        localStorage.setItem('user', username);
-        return username;
-    } else {
-        throw new Error('로그인 실패');
-    }
+        const data = await res.json();
+        const { username, role } = data;
+    
+        console.log(`Welcome, ${username}! Your role is ${role}`);
+    
+        return { username, role }; // ✅ 이 부분을 리턴한다고 명시해줬으니
+      } else {
+        const error = await res.json();
+        console.error('Login failed:', error.error);
+        throw new Error(error.error);
+      }
 };
+
+
   // 로그아웃 함수
 export const logoutUser = async (): Promise<void> => {
     await fetch('/api/logout', {
@@ -39,7 +48,7 @@ export const registerUser = async (username: string, password: string, email: st
 };
 
 // 로그인 상태 확인 함수
-export const checkLogin = async (): Promise<string | null> => {
+export const checkLogin = async (): Promise<{ username: string; role: string } | null> => {
     try {
         const res = await fetch('/api/me', {
             method: 'GET',
@@ -48,7 +57,8 @@ export const checkLogin = async (): Promise<string | null> => {
 
         if (res.ok) {
             const data = await res.json();
-            return data.username; // 또는 서버에서 넘겨주는 필드명에 따라 조정
+            console.log(data);
+            return {username: data.username, role: data.role }; // 또는 서버에서 넘겨주는 필드명에 따라 조정
         } else {
             return null;
         }

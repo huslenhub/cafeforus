@@ -1,32 +1,77 @@
-// components/Navbar.tsx
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import useAuth from '../context/useAuth';
 
-
 const Navbar = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, role } = useAuth();
+  const [query, setQuery] = useState('');
+  const navigate = useNavigate();
+
+  const handleSearch = () => {
+    if (!query.trim()) return;
+    navigate(`/search?query=${encodeURIComponent(query)}`);
+    setQuery('');
+  };
 
   return (
-    <nav className="fixed top-0 left-0 w-full bg-indigo-600 p-4 flex justify-between items-center z-50 shadow-md">
+    <nav className="fixed top-0 left-0 w-full bg-indigo-600 p-4 flex justify-between items-start z-50 shadow-md">
+      {/* 홈 로고 */}
       <Link to="/" className="font-bold text-white text-2xl hover:underline">
         CafeForUs
       </Link>
-      <div className="flex items-center">
-        {user ? (
-          <>
-            <span className="text-white mr-4">Hello, {user}</span>
-            <button 
-              onClick={logout}
-              className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
+
+      {/* 우측 메뉴 */}
+      <div className="flex flex-col items-end gap-2">
+        <div className="flex gap-4 items-center">
+          {user && role === 'ADMIN' && (
+            <Link
+              to="/admin"
+              className="text-red-300 font-semibold hover:underline"
+            >
+              관리자 대시보드
+            </Link>
+          )}
+
+          {user ? (
+            <>
+              <span className="text-white">안녕하세요, {user}님</span>
+              <button
+                onClick={logout}
+                className="bg-red-400 hover:bg-red-500 text-white px-3 py-1 rounded"
               >
-                Logout
+                로그아웃
               </button>
-          </>
-        ) : (
-          <>
-            <Link to="/login" className="text-white mr-4 hover:underline">Login</Link>
-            <Link to="/signup" className="text-white hover:underline">Signup</Link>
-          </>
+            </>
+          ) : (
+            <>
+              <Link to="/login" className="text-white hover:underline">
+                로그인
+              </Link>
+              <Link to="/signup" className="text-white hover:underline">
+                회원가입
+              </Link>
+            </>
+          )}
+        </div>
+
+        {/* 🔍 검색창 */}
+        {user && (
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+              placeholder="게시글 검색"
+              className="px-2 py-1 rounded border"
+            />
+            <button
+              onClick={handleSearch}
+              className="bg-white text-indigo-600 px-3 py-1 rounded hover:bg-gray-200"
+            >
+              검색
+            </button>
+          </div>
         )}
       </div>
     </nav>
