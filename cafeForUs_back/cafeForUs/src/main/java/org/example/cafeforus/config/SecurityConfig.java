@@ -45,7 +45,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/api/posts/delete**").authenticated()              // 글 삭제
                         .requestMatchers(HttpMethod.GET, "/api/posts/read/**").authenticated()            // 글 삭제
                         .requestMatchers(HttpMethod.GET,"/uploads/**").permitAll() // ✅ 이미지 접근 허용
-
+                        .requestMatchers(HttpMethod.GET,"/api/posts/comments/**").authenticated()
+                        .requestMatchers(HttpMethod.POST,"/api/comments/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT,"/api/comments/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE,"/api/comments/**").authenticated()
                         .requestMatchers("/").permitAll()
                         .anyRequest().authenticated()
                 )

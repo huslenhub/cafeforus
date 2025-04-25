@@ -2,6 +2,7 @@ package org.example.cafeforus.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.example.cafeforus.dto.CommentsDto;
 import org.example.cafeforus.dto.PostDto;
 import org.example.cafeforus.entity.Category;
 import org.example.cafeforus.entity.Post;
@@ -10,6 +11,7 @@ import org.example.cafeforus.model.Role;
 import org.example.cafeforus.repository.CategoryRepository;
 import org.example.cafeforus.repository.PostRepository;
 import org.example.cafeforus.repository.UserRepository;
+import org.example.cafeforus.service.CommentService;
 import org.example.cafeforus.service.FileService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -31,6 +33,20 @@ public class PostController {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final FileService fileService;
+    private final CommentService commentService;
+
+    //댓글 불러오기
+    @GetMapping("/comments/{postID}")
+    public ResponseEntity<CommentsDto> getCommentsByPost(
+            @PathVariable Long postID,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size){
+
+        CommentsDto result = commentService.getCommentsByPostId(postID, page, size);
+
+        return ResponseEntity.ok(result);
+    }
+
 
     @GetMapping("/category/{categoryId}")
     public ResponseEntity<List<Post>> getPostsByCategory(@PathVariable Long categoryId) {

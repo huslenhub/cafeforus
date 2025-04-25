@@ -3,6 +3,7 @@ package org.example.cafeforus.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.example.cafeforus.model.Role;
+import org.example.cafeforus.model.UserLevel;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,6 +27,9 @@ public class Users implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private Role role = Role.USER;
+
+    @Enumerated(EnumType.STRING)
+    private UserLevel level = UserLevel.BRONZE;  //
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
