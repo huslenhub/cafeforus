@@ -1,9 +1,10 @@
 package org.example.cafeforus.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.example.cafeforus.model.Role;
-import org.example.cafeforus.model.UserLevel;
+import org.example.cafeforus.model.Level;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,17 +20,22 @@ public class Users implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank
     @Column(unique = true)
     private String username;
 
+    @NotBlank
     private String password;
+
+    @NotBlank
     private String email;
+
 
     @Enumerated(EnumType.STRING)
     private Role role = Role.USER;
 
     @Enumerated(EnumType.STRING)
-    private UserLevel level = UserLevel.BRONZE;  //
+    private Level level = Level.BASIC;  // 유저의 등급 (BASIC, SILVER, GOLD, ADMIN 등)
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -41,13 +47,5 @@ public class Users implements UserDetails {
     @Override public boolean isCredentialsNonExpired() { return true; }
     @Override public boolean isEnabled() { return true; }
 
-    @Override
-    public String toString() {
-        return "Users{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", email='" + email + '\'' +
-                ", role=" + role +
-                '}';
-    }
+
 }

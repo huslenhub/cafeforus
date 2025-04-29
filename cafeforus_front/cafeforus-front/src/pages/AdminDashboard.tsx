@@ -4,7 +4,8 @@ import axios from 'axios';
 interface Category {
     id: number;
     name: string;
-    role: string;
+    minRLevel: string;
+    minWLevel: string;
 }
 
 const AdminDashboard = () => {
@@ -13,7 +14,9 @@ const AdminDashboard = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [editingCategory, setEditingCategory] = useState<Category | null>(null);
-    const [categoryRole, setCategoryRole] = useState('USER');
+    const [minReadLevel, setMinReadLevel] = useState('BASIC');
+    const [minWriteLevel, setMinWriteLevel] = useState('BASIC');
+
 
     // 카테고리 목록 조회
     const fetchCategories = async () => {
@@ -52,7 +55,7 @@ const AdminDashboard = () => {
         setLoading(true);
         setError(null);
         try {
-            await axios.post('/api/category/add', { name: newCategory, role: categoryRole }, { withCredentials: true });
+            await axios.post('/api/category/add', { name: newCategory, minRLevel: minReadLevel, minWLevel: minWriteLevel }, { withCredentials: true });
             setNewCategory('');
             fetchCategories();  // 카테고리 목록 재조회
         } catch (err) {
@@ -66,7 +69,8 @@ const AdminDashboard = () => {
     // 카테고리 수정 함수
     const handleEdit = (category: Category) => {
         setEditingCategory(category); // 수정할 카테고리 설정
-        setCategoryRole(category.role); // 선택된 카테고리의 role을 설정
+        setMinReadLevel(category.minRLevel);
+        setMinWriteLevel(category.minWLevel);
     };
 
     // 수정된 카테고리 저장 함수
@@ -74,11 +78,12 @@ const AdminDashboard = () => {
         if (editingCategory) {
             try {
                 await axios.put(`/api/category/update/${editingCategory.id}`, 
-                    { name: editingCategory.name, role: categoryRole },
+                    { name: editingCategory.name,  minRLevel: minReadLevel, minWLevel: minWriteLevel },
                     { withCredentials: true }
                 );
                 setEditingCategory(null); // 수정 완료 후 입력 필드 초기화
-                setCategoryRole('USER'); // 역할 초기화
+                setMinReadLevel('BASIC');
+                setMinWriteLevel('BASIC');
                 fetchCategories();  // 카테고리 목록 재조회
             } catch (err) {
                 setError('카테고리 수정에 실패했습니다.');
@@ -106,15 +111,40 @@ const AdminDashboard = () => {
                     className="border p-2 rounded w-full"
                     disabled={loading}
                 />
-                <select
-                    value={categoryRole}
-                    onChange={(e) => setCategoryRole(e.target.value)}
-                    className="border p-2 rounded"
-                    disabled={loading}
-                >
-                    <option value="USER">모든 사용자</option>
-                    <option value="ADMIN">관리자만</option>
-                </select>
+                
+
+                <div className="flex flex-col">
+                <label className="text-sm text-gray-600 mb-1">조회 권한 선택</label>
+                    <select
+                        value={minReadLevel}
+                        onChange={(e) => setMinReadLevel(e.target.value)}
+                        className="border p-2 rounded"
+                        disabled={loading}
+                    >
+                        <option value="BASIC">BASIC</option>
+                        <option value="SILVER">SILVER</option>
+                        <option value="GOLD">GOLD</option>
+                        <option value="VIP">VIP</option>
+                        <option value="ADMIN">ADMIN</option>
+                    </select>
+                </div>
+
+                <div className="flex flex-col">
+                <label className="text-sm text-gray-600 mb-1">작성 권한 선택</label>
+                    <select
+                        value={minWriteLevel}
+                        onChange={(e) => setMinWriteLevel(e.target.value)}
+                        className="border p-2 rounded"
+                        disabled={loading}
+                    >
+                        <option value="BASIC">BASIC</option>
+                        <option value="SILVER">SILVER</option>
+                        <option value="GOLD">GOLD</option>
+                        <option value="VIP">VIP</option>
+                        <option value="ADMIN">ADMIN</option>
+                    </select>
+                </div>
+
                 <button
                     onClick={handleAdd}
                     className="bg-green-500 text-white px-4 rounded hover:bg-green-600"
@@ -133,15 +163,37 @@ const AdminDashboard = () => {
                         onChange={(e) => setEditingCategory({ ...editingCategory, name: e.target.value })}
                         className="border p-2 rounded w-full"
                     />
+                   <div className="flex flex-col">
+                <label className="text-sm text-gray-600 mb-1">조회 권한 선택</label>
                     <select
-                        value={categoryRole}
-                        onChange={(e) => setCategoryRole(e.target.value)}
+                        value={minReadLevel}
+                        onChange={(e) => setMinReadLevel(e.target.value)}
                         className="border p-2 rounded"
                         disabled={loading}
                     >
-                        <option value="USER">모든 사용자</option>
-                        <option value="ADMIN">관리자만</option>
+                        <option value="BASIC">BASIC</option>
+                        <option value="SILVER">SILVER</option>
+                        <option value="GOLD">GOLD</option>
+                        <option value="VIP">VIP</option>
+                        <option value="ADMIN">ADMIN</option>
                     </select>
+                </div>
+
+                <div className="flex flex-col">
+                <label className="text-sm text-gray-600 mb-1">작성 권한 선택</label>
+                    <select
+                        value={minWriteLevel}
+                        onChange={(e) => setMinWriteLevel(e.target.value)}
+                        className="border p-2 rounded"
+                        disabled={loading}
+                    >
+                        <option value="BASIC">BASIC</option>
+                        <option value="SILVER">SILVER</option>
+                        <option value="GOLD">GOLD</option>
+                        <option value="VIP">VIP</option>
+                        <option value="ADMIN">ADMIN</option>
+                    </select>
+                </div>
                     <button
                         onClick={handleUpdate}
                         className="bg-blue-500 text-white px-4 rounded hover:bg-blue-600 mt-2"

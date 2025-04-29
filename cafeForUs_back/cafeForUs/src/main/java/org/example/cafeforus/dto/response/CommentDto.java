@@ -1,4 +1,4 @@
-package org.example.cafeforus.dto;
+package org.example.cafeforus.dto.response;
 
 import lombok.Data;
 import org.example.cafeforus.entity.Comment;
@@ -16,7 +16,7 @@ public class CommentDto {
         CommentDto dto = new CommentDto();
         dto.setId(comment.getId());
         dto.setContent(comment.getContent());
-        dto.setWriter(comment.getUser().getUsername()); // Users 클래스에 맞춰 조정
+        dto.setWriter(comment.getAuthor().getUsername());
         dto.setCreatedAt(comment.getCreatedAt());
         return dto;
     }

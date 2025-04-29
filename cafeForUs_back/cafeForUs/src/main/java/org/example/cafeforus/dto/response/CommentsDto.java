@@ -1,4 +1,4 @@
-package org.example.cafeforus.dto;
+package org.example.cafeforus.dto.response;
 
 import lombok.Data;
 
