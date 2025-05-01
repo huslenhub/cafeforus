@@ -21,7 +21,7 @@ public class FileService {
     // 파일을 저장하고 저장된 경로를 반환하는 메서드
     public String saveFile(MultipartFile file) throws IOException {
         // UUID로 파일 이름을 생성하여 중복을 방지
-        String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
         Path path = Paths.get(uploadDir, fileName);
 
         // 파일 저장할 디렉토리 생성

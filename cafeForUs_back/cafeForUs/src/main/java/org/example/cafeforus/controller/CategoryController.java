@@ -39,10 +39,16 @@ public class CategoryController {
     // 카테고리 생성 (관리자만 접근 가능)
     @PostMapping("/add")
     public ResponseEntity<?> createCategory(@RequestBody CategoryDto body, Principal principal) {
+
+
         try {
             Category category = categoryService.createCategory(body, principal);
+            System.out.println("성공");
+            System.out.println(ResponseEntity.status(HttpStatus.CREATED).body(category));
             return ResponseEntity.status(HttpStatus.CREATED).body(category);
         } catch (RuntimeException e) {
+            System.out.println("에러 발생");
+            System.out.println(ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage()));
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         }
     }
@@ -63,6 +69,7 @@ public class CategoryController {
     public ResponseEntity<?> updateCategory(@PathVariable Long id, @RequestBody CategoryDto body, Principal principal) {
         try {
             categoryService.updateCategory(id, body, principal);
+
             return ResponseEntity.ok("카테고리가 성공적으로 수정되었습니다.");
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());

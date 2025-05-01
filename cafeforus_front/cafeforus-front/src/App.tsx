@@ -7,11 +7,13 @@ import Signup from './pages/Signup';
 import Home from './pages/Home';
 import Navbar from './components/Navbar';
 import useAuth from './context/useAuth';
-import AdminDashboard from './pages/AdminDashboard';
+//import AdminDashboard from './pages/AdminDashboard';
 import CategoryPostsPage from './pages/CategoryPostsPage';
 import WritePostPage from './pages/WritePostPage'; // ✅ 글쓰기 페이지 import
 import PostDetailPage from './pages/PostDetailPage';
 import SearchPage from './pages/SearchPage';
+import AdminDashboard from "./components/admin/AdminDashboard";
+import ChatLayout from './components/chat/ChatLayout';
 
 
 
@@ -30,6 +32,7 @@ const App = () => {
         <Route path="/write/:categoryId" element={<WritePostPage />} /> {/* ✅ 글쓰기 경로 추가 */}
         <Route path="/posts/:postId" element={<PostDetailPage />} />
         <Route path="/search" element={<SearchPage />} />
+        <Route path="/chat" element={<ChatLayout/>} />
       </Routes>
     </>
   );

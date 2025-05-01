@@ -6,7 +6,7 @@ import lombok.Data;
 public class CategoryDto {
     private String name;
 
-    private String role;
+    private String minRLevel;
 
-    private String level;
+    private String minWLevel;
 }

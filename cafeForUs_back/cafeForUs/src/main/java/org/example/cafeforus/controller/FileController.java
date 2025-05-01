@@ -29,7 +29,7 @@ public class FileController {
             String decodedFileName = URLDecoder.decode(fileName, StandardCharsets.UTF_8);
             System.out.println("✅ 디코딩된 파일 이름: " + decodedFileName);  // 로그 찍기
             Path filePath = Paths.get(uploadDir, decodedFileName);
-            System.out.println("✅ 전체 파일 경로: " + filePath.toString());  // 경로 출력
+            System.out.println("✅ 전체 파일 경로: " + filePath);  // 경로 출력
             File file = filePath.toFile();
             System.out.println("✅ 파일 존재 여부: " + file.exists());
 

@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.example.cafeforus.dto.request.LoginDto;
 import org.example.cafeforus.dto.request.SignupDto;
-import org.example.cafeforus.entity.Users;
+import org.example.cafeforus.entity.User;
 import org.example.cafeforus.model.Level;
 import org.example.cafeforus.model.Role;
 import org.example.cafeforus.repository.UserRepository;
@@ -37,7 +37,7 @@ public class UserService {
             throw new RuntimeException("이미 존재하는 아이디입니다");
         }
 
-        Users users = new Users();
+        User users = new User();
         users.setUsername(dto.getUsername());
         System.out.println(">>> password: " + dto.getPassword());
         users.setPassword(passwordEncoder.encode(dto.getPassword()));
@@ -48,8 +48,8 @@ public class UserService {
     }
 
     // UserService.java
-    public Users authenticate(String username, String password) {
-        Users users = userRepository.findByUsername(username)
+    public User authenticate(String username, String password) {
+        User users = userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("아이디가 존재하지 않습니다."));
 
         if (users == null) {
@@ -69,7 +69,7 @@ public class UserService {
     }
 
     public Map<String, String> login(LoginDto dto, HttpServletRequest request) throws Exception {
-        Users users = authenticate(dto.getUsername(), dto.getPassword());
+        User users = authenticate(dto.getUsername(), dto.getPassword());
 
         // 권한 설정
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + users.getRole().name()); // "ROLE_ADMIN"과 같은 형식
@@ -110,7 +110,7 @@ public class UserService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         // 인증된 사용자가 Users 객체가 아닐 경우 예외 처리
-        if (!(authentication.getPrincipal() instanceof Users users)) {
+        if (!(authentication.getPrincipal() instanceof User users)) {
             throw new Exception("로그인 정보가 올바르지 않습니다.");
         }
 

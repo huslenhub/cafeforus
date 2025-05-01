@@ -6,7 +6,7 @@ import org.example.cafeforus.dto.request.CommentUpdateRequest;
 import org.example.cafeforus.dto.response.CommentsDto;
 import org.example.cafeforus.entity.Comment;
 import org.example.cafeforus.entity.Post;
-import org.example.cafeforus.entity.Users;
+import org.example.cafeforus.entity.User;
 import org.example.cafeforus.repository.CommentRepository;
 import org.example.cafeforus.repository.PostRepository;
 import org.example.cafeforus.repository.UserRepository;
@@ -34,7 +34,7 @@ public class CommentService {
 
     // 댓글 생성
     public CommentDto createComment(CommentCreateRequest req, String username) {
-        Users user = userRepository.findByUsername(username)
+        User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         Post post = postRepository.findById(req.getPostId())
@@ -81,7 +81,7 @@ public class CommentService {
 
     // 대댓글 생성
     public CommentDto createReply(Long commentId, CommentCreateRequest request, String username) {
-        Users user = userRepository.findByUsername(username)
+        User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         Post post = postRepository.findById(request.getPostId())

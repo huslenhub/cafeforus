@@ -15,18 +15,15 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
     @ManyToOne
     private Post post;
 
-    @NotBlank
     @ManyToOne
-    private Users author;
+    private User author;
 
     @NotBlank
     private String content;
 
-    @NotBlank
     private LocalDateTime createdAt;
 
     @ManyToOne

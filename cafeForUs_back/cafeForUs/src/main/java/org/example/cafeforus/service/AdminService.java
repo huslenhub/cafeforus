@@ -2,7 +2,7 @@ package org.example.cafeforus.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.cafeforus.dto.response.UserActivityDto;
-import org.example.cafeforus.entity.Users;
+import org.example.cafeforus.entity.User;
 import org.example.cafeforus.repository.CommentRepository;
 import org.example.cafeforus.repository.PostRepository;
 import org.example.cafeforus.repository.UserRepository;
@@ -18,7 +18,7 @@ public class AdminService {
     private final CommentRepository commentRepository;
 
     public List<UserActivityDto> getAllUserActivities() {
-        List<Users> users = userRepository.findAll();
+        List<User> users = userRepository.findAll();
         return users.stream()
                 .map(user -> {
                     int postCount = postRepository.countByAuthor(user);

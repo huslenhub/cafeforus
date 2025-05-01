@@ -20,15 +20,12 @@ public class Post {
     @NotBlank
     private String content;
 
-    @NotBlank
     @ManyToOne
-    private Users author;  // 게시글 작성자
+    private User author;  // 게시글 작성자
 
-    @NotBlank
     @ManyToOne
     private Category category;
 
-    @NotBlank
     private LocalDateTime createdAt;
 
     private String imagePath;  // 파일 경로 저장 필드

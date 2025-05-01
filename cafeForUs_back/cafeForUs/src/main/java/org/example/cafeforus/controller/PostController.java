@@ -4,24 +4,13 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.cafeforus.dto.response.CommentsDto;
 import org.example.cafeforus.dto.response.PostDto;
-import org.example.cafeforus.entity.Category;
 import org.example.cafeforus.entity.Post;
-import org.example.cafeforus.entity.Users;
-import org.example.cafeforus.model.Role;
-import org.example.cafeforus.repository.CategoryRepository;
-import org.example.cafeforus.repository.PostRepository;
-import org.example.cafeforus.repository.UserRepository;
-import org.example.cafeforus.service.CommentService;
-import org.example.cafeforus.service.FileService;
 import org.example.cafeforus.service.PostService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 

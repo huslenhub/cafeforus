@@ -6,7 +6,7 @@ import org.example.cafeforus.dto.response.CommentsDto;
 import org.example.cafeforus.dto.response.PostDto;
 import org.example.cafeforus.entity.Category;
 import org.example.cafeforus.entity.Post;
-import org.example.cafeforus.entity.Users;
+import org.example.cafeforus.entity.User;
 import org.example.cafeforus.exception.FileStorageException;
 import org.example.cafeforus.model.Role;
 import org.example.cafeforus.repository.CategoryRepository;
@@ -51,7 +51,7 @@ public class PostService {
 
     // 게시글 작성
     public Post createPost(PostDto body, MultipartFile image, String username) {
-        Users user = findUser(username);
+        User user = findUser(username);
         Category category = findCategory(body.getCategoryId());
 
         Post post = new Post();
@@ -93,7 +93,7 @@ public class PostService {
     // 게시글 삭제
     public void deletePost(Long postId, String username) {
         Post post = findPost(postId);
-        Users user = findUser(username);
+        User user = findUser(username);
 
         boolean isAuthor = post.getAuthor().getUsername().equals(username);
         boolean isAdmin = user.getRole() == Role.ADMIN;
@@ -120,7 +120,7 @@ public class PostService {
 
     // 🔥 헬퍼 메서드 (중복 제거용)
 
-    private Users findUser(String username) {
+    private User findUser(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다."));
     }
