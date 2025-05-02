@@ -3,7 +3,7 @@ import React from 'react';
 import { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import useAuth from '../context/useAuth';
+import {useAuth} from '../context/useAuth';
 
 interface Post {
   id: number;
@@ -12,10 +12,11 @@ interface Post {
 }
 
 const CategoryPostsPage = () => {
-  const { role } = useAuth();
+  const { level } = useAuth();
   const { categoryId } = useParams<{ categoryId: string }>(); // URL에서 categoryId를 가져옵니다.
   const [categoryName, setCategoryName] = useState<string>(''); // 카테고리 이름 상태 추가
-  const [writeRoles, setWriteRoles] = useState<string[]>([]); // 작성 가능한 역할 저장
+  const [minReadLevel, setMinReadLevel] = useState<string[]>([]); // 작성 가능한 역할 저장
+  const [minWriteLevel, setMinWriteLevel] = useState<string[]>([]); // 작성 가능한 역할 저장
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -27,14 +28,18 @@ const CategoryPostsPage = () => {
     try {
       const res = await axios.get(`/api/category/name/${categoryId}`, { withCredentials: true });
       setCategoryName(res.data.name); // 카테고리 이름 설정
-      setWriteRoles(res.data.role || []); // 예: ["USER", "ADMIN"]
-      console.log("카테고리 이름 : " + res.data.name);
-      console.log("작성 가능 역할:", res.data.role);
+      setMinReadLevel(res.data.minReadLevel);
+      setMinWriteLevel(res.data.minWriteLevel);
+      console.log("카테고리 이름 : ",  res.data.name);
+      console.log("작성 가능 역할:",  res.data.minWriteLevel);
+      console.log("조회 가능 레벨: ",  res.data.minReadLevel)
+      console.log(res.data);
     } catch (err) {
       setError('카테고리 이름을 가져오는 데 실패했습니다.');
       console.error(err);
     }
   }, [categoryId]);
+
 
   // 카테고리의 글 목록을 가져오는 함수
   const fetchPosts = useCallback(async () => {
@@ -63,7 +68,8 @@ const CategoryPostsPage = () => {
     navigate(`/write/${categoryId}`);
   };
 
-  const canWrite = role !== null && writeRoles.includes(role);
+  const canWrite =  level !== null && minWriteLevel.includes(level);
+  const canRead = level !== null && minReadLevel.includes(level);
 
   return (
     <div className="p-8 max-w-xl mx-auto mt-32">

@@ -23,6 +23,8 @@ public class Post {
     @ManyToOne
     private User author;  // 게시글 작성자
 
+    private int commentCount;
+
     @ManyToOne
     private Category category;
 

@@ -34,6 +34,9 @@ public class User implements UserDetails {
     @NotBlank
     private String email;
 
+    private int postCount;
+    private int commentCount;
+
     @Enumerated(EnumType.STRING)
     private Role role = Role.USER;
 

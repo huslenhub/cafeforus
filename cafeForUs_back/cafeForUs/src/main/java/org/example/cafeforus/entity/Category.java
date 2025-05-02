@@ -16,6 +16,8 @@ public class Category {
     @NotBlank
     private String name;
 
+    private int postCount;
+
     @ManyToOne
     private User createdBy; // 관리자 계정 (User)
 

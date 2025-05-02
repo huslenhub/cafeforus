@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import useAuth from '../context/useAuth'; // 경로에 맞게 수정하세요
+import { useAuth } from '../context/useAuth'; // 경로에 맞게 수정하세요
 import CommentForm from '../components/CommentForm';
 import CommentList from '../components/CommentList';
-
 
 interface Post {
   id: number;
@@ -26,7 +25,7 @@ const PostDetailPage = () => {
   const { postId } = useParams<{ postId: string }>();
   const [post, setPost] = useState<Post | null>(null);
   const navigate = useNavigate();
-  const { user, role } = useAuth();
+  const { user, level } = useAuth();  // `role` 대신 `level` 사용
 
   useEffect(() => {
     if (!postId) return;
@@ -56,12 +55,12 @@ const PostDetailPage = () => {
       const message = err.response?.data?.message || '게시글 삭제에 실패했습니다.';
       alert(message);
     }
-    
   };
 
   if (!post) return <div className="text-center mt-20">불러오는 중...</div>;
 
-  const isAuthorOrAdmin = user === post.author.username || role === 'ADMIN';
+  // 레벨을 사용하여 작성자 또는 관리자 여부를 확인
+  const isAuthorOrAdmin = user?.username === post.author.username || level === 'ADMIN';
   const imageUrl = post.imagePath ? `http://localhost:8080/uploads/${encodeURIComponent(post.imagePath)}` : '';
 
   if (!postId) return <div>잘못된 접근입니다.</div>; // postId가 undefined일 경우 처리
@@ -75,7 +74,7 @@ const PostDetailPage = () => {
           {post.category.name} | 작성자: {post.author.username} | {new Date(post.createdAt).toLocaleString()} | 조회수: {post.views}
         </div>
         <div className="flex gap-2">
-          {user === post.author.username && (
+          {user?.username === post.author.username && (
             <button
               onClick={() => navigate(`/write/${post.category.id}`, { state: { post, isEdit: true } })}
               className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"

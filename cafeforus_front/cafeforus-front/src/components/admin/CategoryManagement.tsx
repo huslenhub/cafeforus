@@ -1,40 +1,56 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { Pencil, Plus, Trash } from "lucide-react";
 
 interface Category {
   id: number;
   name: string;
-  postCount: number;
-  readPermission: string;
-  writePermission: string;
+  postCount?: number; //없을 때 무시 할 수 있게
+  minReadLevel: string;
+  minWriteLevel: string;
 }
 
-const initialCategories: Category[] = [
-  { id: 1, name: "공지사항", postCount: 5, readPermission: "BASIC", writePermission: "BASIC" },
-  { id: 2, name: "자유게시판", postCount: 20, readPermission: "SILVER", writePermission: "SILVER" },
-];
-
 export default function CategoryManagement() {
-  const [categories, setCategories] = useState(initialCategories);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [editCategory, setEditCategory] = useState<Category | null>(null);
   const [categoryName, setCategoryName] = useState("");
-  const [readPermission, setReadPermission] = useState("BASIC");
-  const [writePermission, setWritePermission] = useState("BASIC");
+  const [minRLevel, setMinRLevel] = useState("BASIC");
+  const [minWLevel, setMinWLevel] = useState("BASIC");
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState<number | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchCategories = async () => {
+    try {
+      setLoading(true);
+      // ✅ 백엔드 GET 요청: 모든 카테고리 목록 조회
+      const res = await axios.get("/api/category/all", { withCredentials: true });
+      console.log(res.data);
+      setCategories(res.data);
+    } catch (err) {
+      setError("카테고리 목록을 불러오는 데 실패했습니다.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   const openModal = (category?: Category) => {
     if (category) {
       setEditCategory(category);
       setCategoryName(category.name);
-      setReadPermission(category.readPermission);
-      setWritePermission(category.writePermission);
+      setMinRLevel(category.minReadLevel);
+      setMinWLevel(category.minWriteLevel);
     } else {
       setEditCategory(null);
       setCategoryName("");
-      setReadPermission("BASIC");
-      setWritePermission("BASIC");
+      setMinRLevel("BASIC");
+      setMinWLevel("BASIC");
     }
     setShowModal(true);
   };
@@ -43,32 +59,46 @@ export default function CategoryManagement() {
     setShowModal(false);
     setEditCategory(null);
     setCategoryName("");
-    setReadPermission("BASIC");
-    setWritePermission("BASIC");
+    setMinRLevel("BASIC");
+    setMinWLevel("BASIC");
+    setError(null);
   };
 
-  const handleSave = () => {
-    if (editCategory) {
-      // 수정
-      setCategories((prev) =>
-        prev.map((cat) =>
-          cat.id === editCategory.id
-            ? { ...cat, name: categoryName, readPermission, writePermission }
-            : cat
-        )
-      );
-    } else {
-      // 추가
-      const newCategory: Category = {
-        id: Date.now(),
-        name: categoryName,
-        postCount: 0,
-        readPermission,
-        writePermission,
-      };
-      setCategories((prev) => [...prev, newCategory]);
+  const handleSave = async () => {
+    if (!categoryName.trim()) return;
+
+    try {
+      setLoading(true);
+      if (editCategory) {
+        // ✅ 백엔드 PUT 요청: 카테고리 수정
+        await axios.put(
+          `/api/admin/category/update/${editCategory.id}`,
+          {
+            name: categoryName,
+            minRLevel,
+            minWLevel,
+          },
+          { withCredentials: true }
+        );
+      } else {
+      // ✅ 백엔드 POST 요청: 카테고리 추가
+        await axios.post(
+          "/api/admin/category/add",
+          {
+            name: categoryName,
+            minRLevel,
+            minWLevel,
+          },
+          { withCredentials: true }
+        );
+      }
+      await fetchCategories();
+      closeModal();
+    } catch (err) {
+      setError("저장에 실패했습니다.");
+    } finally {
+      setLoading(false);
     }
-    closeModal();
   };
 
   const handleDelete = (categoryId: number) => {
@@ -76,10 +106,20 @@ export default function CategoryManagement() {
     setShowConfirmDelete(true);
   };
 
-  const confirmDelete = () => {
-    setCategories(categories.filter((cat) => cat.id !== categoryToDelete));
-    setShowConfirmDelete(false);
-    setCategoryToDelete(null);
+  const confirmDelete = async () => {
+    if (categoryToDelete == null) return;
+    try {
+      setLoading(true);
+            // ✅ 백엔드 DELETE 요청: 카테고리 삭제
+      await axios.delete(`/api/admin/category/delete/${categoryToDelete}`, { withCredentials: true });
+      await fetchCategories();
+    } catch (err) {
+      setError("삭제에 실패했습니다.");
+    } finally {
+      setLoading(false);
+      setShowConfirmDelete(false);
+      setCategoryToDelete(null);
+    }
   };
 
   const cancelDelete = () => {
@@ -100,14 +140,16 @@ export default function CategoryManagement() {
         </button>
       </div>
 
+      {error && <div className="text-red-500">{error}</div>}
+
       <div className="overflow-x-auto bg-white border rounded">
         <table className="min-w-full text-sm text-left">
           <thead className="bg-gray-100">
             <tr>
               <th className="p-3">이름</th>
-              <th className="p-3">게시글 수</th>
               <th className="p-3">읽기 권한</th>
               <th className="p-3">쓰기 권한</th>
+              <th className="p-3">게시글 수</th> 
               <th className="p-3 text-right">작업</th>
             </tr>
           </thead>
@@ -115,9 +157,9 @@ export default function CategoryManagement() {
             {categories.map((cat) => (
               <tr key={cat.id} className="border-t hover:bg-gray-50">
                 <td className="p-3">{cat.name}</td>
-                <td className="p-3">{cat.postCount}</td>
-                <td className="p-3">{cat.readPermission}</td>
-                <td className="p-3">{cat.writePermission}</td>
+                <td className="p-3">{cat.minReadLevel}</td>
+                <td className="p-3">{cat.minWriteLevel}</td>
+                <td className="p-3">{cat.postCount ?? 0}</td> 
                 <td className="p-3 text-right">
                   <button
                     className="text-gray-500 hover:text-blue-500 mr-2"
@@ -151,13 +193,15 @@ export default function CategoryManagement() {
               placeholder="카테고리 이름"
               value={categoryName}
               onChange={(e) => setCategoryName(e.target.value)}
+              disabled={loading}
             />
             <div>
               <label className="block text-sm">읽기 권한</label>
               <select
-                value={readPermission}
-                onChange={(e) => setReadPermission(e.target.value)}
+                value={minRLevel}
+                onChange={(e) => setMinRLevel(e.target.value)}
                 className="w-full mt-2 border p-2 rounded"
+                disabled={loading}
               >
                 <option value="BASIC">BASIC</option>
                 <option value="SILVER">SILVER</option>
@@ -169,9 +213,10 @@ export default function CategoryManagement() {
             <div>
               <label className="block text-sm">쓰기 권한</label>
               <select
-                value={writePermission}
-                onChange={(e) => setWritePermission(e.target.value)}
+                value={minWLevel}
+                onChange={(e) => setMinWLevel(e.target.value)}
                 className="w-full mt-2 border p-2 rounded"
+                disabled={loading}
               >
                 <option value="BASIC">BASIC</option>
                 <option value="SILVER">SILVER</option>
@@ -184,12 +229,14 @@ export default function CategoryManagement() {
               <button
                 onClick={closeModal}
                 className="px-4 py-2 border rounded hover:bg-gray-100"
+                disabled={loading}
               >
                 취소
               </button>
               <button
                 onClick={handleSave}
                 className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                disabled={loading}
               >
                 저장
               </button>
@@ -208,12 +255,14 @@ export default function CategoryManagement() {
               <button
                 onClick={cancelDelete}
                 className="px-4 py-2 border rounded hover:bg-gray-100"
+                disabled={loading}
               >
                 취소
               </button>
               <button
                 onClick={confirmDelete}
                 className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                disabled={loading}
               >
                 삭제
               </button>

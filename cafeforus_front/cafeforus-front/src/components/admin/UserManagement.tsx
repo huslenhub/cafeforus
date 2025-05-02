@@ -1,82 +1,51 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import axios, { AxiosError } from "axios";
 
+// 사용자 인터페이스 정의
 interface User {
   id: number;
   username: string;
   email: string;
-  level: "BASIC" | "SILVER" | "GOLD" | "VIP" | "ADMIN";
+  level: string;
   role: string;
   postCount: number;
   commentCount: number;
 }
 
-const users: User[] = [
-  { id: 1, username: "user01", email: "user01@gmail.com", level: "BASIC", role: "USER", postCount: 5, commentCount: 12 },
-  { id: 2, username: "user02", email: "user02@gmail.com", level: "SILVER", role: "USER", postCount: 10, commentCount: 18 },
-  { id: 3, username: "user03", email: "user03@gmail.com", level: "SILVER", role: "USER", postCount: 8, commentCount: 20 },
-  { id: 4, username: "user04", email: "user04@gmail.com", level: "GOLD", role: "USER", postCount: 15, commentCount: 30 },
-  { id: 5, username: "admin01", email: "admin01@gmail.com", level: "ADMIN", role: "ADMIN", postCount: 40, commentCount: 80 },
-  { id: 6, username: "user05", email: "user05@gmail.com", level: "BASIC", role: "USER", postCount: 3, commentCount: 5 },
-  { id: 7, username: "user06", email: "user06@gmail.com", level: "GOLD", role: "USER", postCount: 20, commentCount: 45 },
-  { id: 8, username: "user07", email: "user07@gmail.com", level: "VIP", role: "USER", postCount: 25, commentCount: 60 },
-];
+export default function UserManagement() {
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-const levels: ("ALL" | User["level"])[] = ["ALL", "BASIC", "SILVER", "GOLD", "VIP", "ADMIN"];
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      // ✅ 백엔드 GET 요청: 모든 카테고리 목록 조회
+      const res = await axios.get("/api/admin/all/user", { withCredentials: true });
+      console.log(res.data);
+      setUsers(res.data);
+    } catch (err) {
+      setError("유저 볼러오는데 실패 했습니다.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-const UserManagement: React.FC = () => {
-  const [search, setSearch] = useState<string>("");
-  const [selectedLevel, setSelectedLevel] = useState<"ALL" | User["level"]>("ALL");
-
-  const filteredUsers = users.filter((user) => {
-    const matchesSearch =
-      user.username.toLowerCase().includes(search.toLowerCase()) ||
-      user.email.toLowerCase().includes(search.toLowerCase());
-    const matchesLevel = selectedLevel === "ALL" || user.level === selectedLevel;
-
-    return matchesSearch && matchesLevel;
-  });
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-bold">유저 관리</h2>
-
-      {/* 필터 + 검색 */}
-      <div className="flex flex-wrap justify-between items-center gap-2">
-        {/* 레벨 필터 */}
-        <div className="flex flex-wrap gap-2">
-          {levels.map((level) => (
-            <button
-              key={level}
-              onClick={() => setSelectedLevel(level)}
-              className={`px-3 py-1 rounded-full text-sm border ${
-                selectedLevel === level ? "bg-blue-500 text-white" : "bg-gray-100 hover:bg-gray-200"
-              }`}
-            >
-              {level}
-            </button>
-          ))}
-        </div>
-
-        {/* 검색창 */}
-        <div className="flex gap-2 items-center">
-          <input
-            type="text"
-            placeholder="Search by username or email"
-            className="border rounded px-3 py-1 text-sm"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <button
-            onClick={() => setSearch(search)}
-            className="bg-blue-500 text-white text-sm px-3 py-1 rounded hover:bg-blue-600"
-          >
-            검색
-          </button>
-        </div>
+      <div className="flex justify-between items-center">
+        <h2 className="text-xl font-bold">유저 리스트</h2>
       </div>
 
-      {/* 유저 테이블 */}
-      <div className="overflow-x-auto border bg-white rounded">
+      {loading && <div className="text-blue-500">로딩 중...</div>}
+
+      {error && <div className="text-red-500">{error}</div>}
+
+      <div className="overflow-x-auto bg-white border rounded">
         <table className="min-w-full text-sm text-left">
           <thead className="bg-gray-100">
             <tr>
@@ -89,21 +58,20 @@ const UserManagement: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredUsers.map((user) => (
-              <tr key={user.id} className="border-t hover:bg-gray-50">
-                <td className="p-3">{user.username}</td>
-                <td className="p-3">{user.email}</td>
-                <td className="p-3">{user.level}</td>
-                <td className="p-3">{user.role}</td>
-                <td className="p-3">{user.postCount}</td>
-                <td className="p-3">{user.commentCount}</td>
-              </tr>
-            ))}
-            {filteredUsers.length === 0 && (
+            {Array.isArray(users) && users.length > 0 ? (
+              users.map((user) => (
+                <tr key={user.id} className="border-t hover:bg-gray-50">
+                  <td className="p-3">{user.username}</td>
+                  <td className="p-3">{user.email}</td>
+                  <td className="p-3">{user.level}</td>
+                  <td className="p-3">{user.role}</td>
+                  <td className="p-3">{user.postCount}</td>
+                  <td className="p-3">{user.commentCount}</td>
+                </tr>
+              ))
+            ) : (
               <tr>
-                <td colSpan={6} className="p-3 text-center text-gray-500">
-                  검색 결과가 없습니다.
-                </td>
+                <td colSpan={6} className="text-center p-3">유저 정보가 없습니다.</td>
               </tr>
             )}
           </tbody>
@@ -111,6 +79,4 @@ const UserManagement: React.FC = () => {
       </div>
     </div>
   );
-};
-
-export default UserManagement;
+}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import useAuth from '../context/useAuth';
+import { useAuth } from '../context/useAuth';
 import { Link } from 'react-router-dom'; // Link를 임포트하여 페이지 이동
 
 interface Category {
@@ -38,7 +38,7 @@ const Home = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-8">
       <h1 className="text-3xl font-semibold text-indigo-600 mb-8">
-        Welcome to CafeUs, {user}!
+        Welcome to CafeUs, {user?.username}!
       </h1>
 
       {error && <div className="bg-red-200 text-red-800 p-2 mb-4 rounded">{error}</div>}

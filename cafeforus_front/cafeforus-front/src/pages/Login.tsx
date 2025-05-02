@@ -1,14 +1,14 @@
-import React from 'react';
-// pages/login.tsx
-import { useState, useEffect } from 'react';
+// pages/Login.tsx
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import useAuth from '../context/useAuth';
+import { useAuth } from '../context/useAuth';
 
 const Login = () => {
   const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
   // 🔐 로그인된 사용자는 로그인 페이지 접근 차단
   useEffect(() => {
@@ -26,11 +26,11 @@ const Login = () => {
     }
 
     try {
-      await login(username, password);
-      // 로그인 성공 시 navigate는 AuthProvider 내부에서 이미 처리됨
-    } catch (error) {
-      console.log(error);
-      alert('로그인 실패. 다시 시도해주세요.');
+      // login 함수 호출 시, 객체 형태로 전달
+      await login({ username, password });
+      navigate('/'); // 로그인 후 홈으로 이동
+    } catch (error: any) {
+      setError(error.message || '로그인 실패. 다시 시도해주세요.');
     }
   };
 
@@ -38,6 +38,8 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center pt-20 bg-gray-50">
       <form onSubmit={handleSubmit} className="max-w-md mx-auto p-8 bg-white shadow-lg rounded-lg">
         <h2 className="text-2xl font-semibold mb-6 text-center text-indigo-600">로그인</h2>
+
+        {error && <div className="text-red-500 mb-4">{error}</div>} {/* 에러 메시지 표시 */}
 
         <input
           type="text"
@@ -56,9 +58,9 @@ const Login = () => {
         <button
           type="submit"
           className="bg-indigo-600 text-white w-full py-3 rounded-md hover:bg-indigo-700 transition duration-200"
-          >
-            로그인
-          </button>
+        >
+          로그인
+        </button>
       </form>
     </div>
   );

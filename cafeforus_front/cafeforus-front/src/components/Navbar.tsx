@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import useAuth from '../context/useAuth';
+import { useAuth } from '../context/useAuth';
 
 const Navbar = () => {
-  const { user, logout, role } = useAuth();
+  const { user, logout, level } = useAuth();
   const [query, setQuery] = useState('');
   const navigate = useNavigate();
 
@@ -11,6 +11,11 @@ const Navbar = () => {
     if (!query.trim()) return;
     navigate(`/search?query=${encodeURIComponent(query)}`);
     setQuery('');
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/'); // 로그아웃 후 홈으로 리디렉션
   };
 
   return (
@@ -23,7 +28,7 @@ const Navbar = () => {
       {/* 우측 메뉴 */}
       <div className="flex flex-col items-end gap-2">
         <div className="flex gap-4 items-center">
-          {user && role === 'ADMIN' && (
+          {user && level === 'ADMIN' && (
             <Link
               to="/admin"
               className="text-red-300 font-semibold hover:underline"
@@ -34,9 +39,9 @@ const Navbar = () => {
 
           {user ? (
             <>
-              <span className="text-white">안녕하세요, {user}님</span>
+              <span className="text-white">안녕하세요, {user.username}님 level : {level}</span>
               <button
-                onClick={logout}
+                onClick={handleLogout}
                 className="bg-red-400 hover:bg-red-500 text-white px-3 py-1 rounded"
               >
                 로그아웃

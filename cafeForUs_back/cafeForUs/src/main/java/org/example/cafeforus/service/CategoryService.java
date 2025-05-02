@@ -1,6 +1,8 @@
 package org.example.cafeforus.service;
 
 import org.example.cafeforus.dto.request.CategoryDto;
+import org.example.cafeforus.dto.response.CategoryAllResponseDto;
+import org.example.cafeforus.dto.response.CategoryResponseOnebyOne;
 import org.example.cafeforus.entity.Category;
 import org.example.cafeforus.entity.User;
 import org.example.cafeforus.model.Level;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CategoryService {
@@ -26,15 +29,30 @@ public class CategoryService {
     }
 
     // 모든 카테고리 조회
-    public List<Category> getAllCategories() {
-        return categoryRepository.findAll();
+    public List<CategoryAllResponseDto> getAllCategories() {
+        return categoryRepository.findAll().stream()
+                .map(c -> new CategoryAllResponseDto(
+                        c.getId(),
+                        c.getName(),
+                        c.getMinReadLevel().name(),
+                        c.getMinWriteLevel().name(),
+                        c.getPostCount()
+                ))
+                .collect(Collectors.toList());
     }
 
-    // 카테고리 ID로 카테고리 정보 조회
-    public Category getCategoryById(Long categoryId) {
-        return categoryRepository.findById(categoryId)
+    public CategoryResponseOnebyOne getCategorySummaryById(Long categoryId) {
+        Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new IllegalArgumentException("카테고리를 찾을 수 없습니다."));
+
+        return new CategoryResponseOnebyOne(
+                category.getName(),
+                category.getMinWriteLevel().name(), // enum → 문자열
+                category.getMinReadLevel().name()
+        );
     }
+
+
 
     // 카테고리 생성 (관리자만 접근 가능)성공
     public Category createCategory(CategoryDto body, Principal principal) {

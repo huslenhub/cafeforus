@@ -1,8 +1,7 @@
-
 // pages/signup.tsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import useAuth from '../context/useAuth';
+import { useAuth } from '../context/useAuth';
 
 const Signup = () => {
   const [username, setUsername] = useState('');
@@ -44,7 +43,8 @@ const Signup = () => {
     }
 
     try {
-      await register(username, password, email);
+      // 객체 형태로 register 호출
+      await register({ username, password, email });
       alert('회원가입 성공! 환영합니다 🎉');
       navigate('/');
     } catch {
