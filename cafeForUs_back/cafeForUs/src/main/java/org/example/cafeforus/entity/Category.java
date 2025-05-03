@@ -18,6 +18,16 @@ public class Category {
 
     private int postCount;
 
+
+    public void incrementPostCount() {
+        this.postCount++;
+    }
+    public void decrementPostCount() {
+        if (this.postCount > 0) {
+            this.postCount--;
+        }
+    }
+
     @ManyToOne
     private User createdBy; // 관리자 계정 (User)
 

@@ -49,6 +49,23 @@ public class User implements UserDetails {
         return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
 
+    public void incrementPostCount() {
+        this.postCount++;
+    }
+    public void decrementPostCount() {
+        if (this.postCount > 0) {
+            this.postCount--;
+        }
+    }
+    public void incrementCommentCount() {
+        this.commentCount++;
+    }
+    public void decrementCommentCount() {
+        if (this.commentCount > 0) {
+            this.commentCount--;
+        }
+    }
+
     @Override public boolean isAccountNonExpired() { return true; }
     @Override public boolean isAccountNonLocked() { return true; }
     @Override public boolean isCredentialsNonExpired() { return true; }

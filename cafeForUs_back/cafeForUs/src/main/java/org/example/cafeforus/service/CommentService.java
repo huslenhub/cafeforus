@@ -47,11 +47,19 @@ public class CommentService {
 
         commentRepository.save(comment);
 
+        user.incrementCommentCount();
+        userRepository.save(user);
+
+        post.incrementCommentCount();
+        postRepository.save(post);
+
         return CommentDto.fromEntity(comment);
     }
 
     // 댓글 수정
     public CommentDto updateComment(Long commentId, CommentUpdateRequest request, String username) {
+
+
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
 
@@ -63,11 +71,17 @@ public class CommentService {
         comment.setContent(request.getContent());
         commentRepository.save(comment);
 
+
+
         return CommentDto.fromEntity(comment);
     }
 
     // 댓글 삭제
     public void deleteComment(Long commentId, String username) {
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
 
@@ -77,6 +91,14 @@ public class CommentService {
         }
 
         commentRepository.delete(comment);
+
+        user.decrementCommentCount();
+        userRepository.save(user);
+
+        Post post = comment.getPost();
+        post.decrementCommentCount();
+        postRepository.save(post);
+
     }
 
     // 대댓글 생성

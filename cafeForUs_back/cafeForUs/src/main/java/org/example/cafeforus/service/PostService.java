@@ -51,23 +51,36 @@ public class PostService {
 
     // 게시글 작성
     public Post createPost(PostDto body, MultipartFile image, String username) {
-        User user = findUser(username);
-        Category category = findCategory(body.getCategoryId());
+        try {
+            User user = findUser(username);
+            Category category = findCategory(body.getCategoryId());
 
-        Post post = new Post();
-        post.setTitle(body.getTitle());
-        post.setContent(body.getContent());
-        post.setCategory(category);
-        post.setAuthor(user);
+            Post post = new Post();
+            post.setTitle(body.getTitle());
+            post.setContent(body.getContent());
+            post.setCategory(category);
+            post.setAuthor(user);
 
-        if (image != null && !image.isEmpty()) {
-            String savedPath = saveImage(image);
-            post.setImagePath(savedPath);
+            if (image != null && !image.isEmpty()) {
+                String savedPath = saveImage(image);
+                post.setImagePath(savedPath);
+            }
+
+            Post savedPost = postRepository.save(post);
+
+            // 글 수 증가
+            user.incrementPostCount(); // User 엔티티에 메서드가 있다고 가정
+            userRepository.save(user); // 꼭 저장해야 DB에 반영됨        }
+
+            category.incrementPostCount();
+            categoryRepository.save(category);
+
+            return savedPost;
+        } catch (Exception e) {
+            // 예외 로깅 또는 커스텀 예외 처리
+            throw new RuntimeException("게시글 작성 중 오류가 발생했습니다.", e);
         }
-
-        return postRepository.save(post);
     }
-
     // 게시글 수정
     public Post updatePost(Long postId, PostDto body, MultipartFile image, String username) {
         Post post = findPost(postId);
@@ -92,17 +105,32 @@ public class PostService {
 
     // 게시글 삭제
     public void deletePost(Long postId, String username) {
-        Post post = findPost(postId);
-        User user = findUser(username);
+        try {
+            Post post = findPost(postId);
+            User user = findUser(username);
 
-        boolean isAuthor = post.getAuthor().getUsername().equals(username);
-        boolean isAdmin = user.getRole() == Role.ADMIN;
+            boolean isAuthor = post.getAuthor().getUsername().equals(username);
+            boolean isAdmin = user.getRole() == Role.ADMIN;
 
-        if (!isAuthor && !isAdmin) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "삭제 권한이 없습니다.");
+            if (!isAuthor && !isAdmin) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "삭제 권한이 없습니다.");
+            }
+
+            postRepository.delete(post);
+
+            // 글 수 감소
+            User author = post.getAuthor();
+            author.decrementPostCount();
+            userRepository.save(author);
+
+            Category category = post.getCategory();
+            category.decrementPostCount();
+            categoryRepository.save(category);
+
+        } catch (Exception e) {
+            // 로그 남기기 혹은 커스텀 예외로 변환
+            throw new RuntimeException("게시글 삭제 중 오류가 발생했습니다.", e);
         }
-
-        postRepository.delete(post);
     }
 
     // 게시글 상세 조회

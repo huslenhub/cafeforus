@@ -25,6 +25,15 @@ public class Post {
 
     private int commentCount;
 
+    public void incrementCommentCount() {
+        this.commentCount++;
+    }
+    public void decrementCommentCount() {
+        if (this.commentCount > 0) {
+            this.commentCount--;
+        }
+    }
+
     @ManyToOne
     private Category category;
 
