@@ -58,24 +58,19 @@ public class CommentService {
 
     // 댓글 수정
     public CommentDto updateComment(Long commentId, CommentUpdateRequest request, String username) {
-
-
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new RuntimeException("Comment not found"));
+                .orElseThrow(() -> new RuntimeException("댓글을 찾을 수 없습니다."));
 
         // 댓글 작성자만 수정 가능
-        if (!comment.getAuthor().equals(username)) {
-            throw new RuntimeException("Unauthorized access");
+        if (!comment.getAuthor().getUsername().equals(username)) {
+            throw new RuntimeException("댓글 수정 권한이 없습니다.");
         }
 
         comment.setContent(request.getContent());
         commentRepository.save(comment);
 
-
-
         return CommentDto.fromEntity(comment);
     }
-
     // 댓글 삭제
     public void deleteComment(Long commentId, String username) {
 
@@ -98,8 +93,9 @@ public class CommentService {
         Post post = comment.getPost();
         post.decrementCommentCount();
         postRepository.save(post);
-
     }
+
+
 
     // 대댓글 생성
     public CommentDto createReply(Long commentId, CommentCreateRequest request, String username) {

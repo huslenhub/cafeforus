@@ -7,7 +7,6 @@ import org.example.cafeforus.dto.response.PostDto;
 import org.example.cafeforus.entity.Category;
 import org.example.cafeforus.entity.Post;
 import org.example.cafeforus.entity.User;
-import org.example.cafeforus.exception.FileStorageException;
 import org.example.cafeforus.model.Role;
 import org.example.cafeforus.repository.CategoryRepository;
 import org.example.cafeforus.repository.PostRepository;
@@ -167,7 +166,7 @@ public class PostService {
         try {
             return fileService.saveFile(image);
         } catch (IOException e) {
-            throw new FileStorageException("파일 저장에 실패했습니다.", e);
+            return null;
         }
     }
 }

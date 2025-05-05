@@ -34,9 +34,6 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/register", "/api/login", "/api/logout").permitAll()
-//                        .requestMatchers(new AntPathRequestMatcher("/api/category/add")).hasRole("ADMIN") // ✅ admin만 접근 가능
-//                        .requestMatchers(new AntPathRequestMatcher("/api/category/delete/{id}")).hasRole("ADMIN") // ✅ admin만 접근 가능
-//                        .requestMatchers(new AntPathRequestMatcher("/api/category/update/{id}")).hasRole("ADMIN") // ✅ admin만 접근 가능
                         .requestMatchers(HttpMethod.GET, "/api/me").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/category/all").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/category/name/*").permitAll()

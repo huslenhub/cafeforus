@@ -20,46 +20,61 @@ public class CommentController {
     public CommentController(CommentService commentService) {
         this.commentService = commentService;
     }
-
     // 댓글 작성
     @PostMapping("/")
-    public ResponseEntity<CommentDto> createComment(
+    public ResponseEntity<?> createComment(
             @RequestBody CommentCreateRequest request,
             Principal principal) {
-        String username = principal.getName(); // 세션 기반 로그인 사용자 이름
-        CommentDto result = commentService.createComment(request, username);
-        return ResponseEntity.status(HttpStatus.CREATED).body(result);
+        try {
+            String username = principal.getName();
+            CommentDto result = commentService.createComment(request, username);
+            return ResponseEntity.status(HttpStatus.CREATED).body(result);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     // 댓글 수정
     @PutMapping("/{id}")
-    public ResponseEntity<CommentDto> updateComment(
+    public ResponseEntity<?> updateComment(
             @PathVariable Long id,
             @RequestBody CommentUpdateRequest request,
             Principal principal) {
-        String username = principal.getName();  // 세션 기반 사용자 이름
-        CommentDto result = commentService.updateComment(id, request, username);
-        return ResponseEntity.ok(result);
+        try {
+            String username = principal.getName();
+            CommentDto result = commentService.updateComment(id, request, username);
+            return ResponseEntity.ok(result);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     // 댓글 삭제
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteComment(
+    public ResponseEntity<?> deleteComment(
             @PathVariable Long id,
             Principal principal) {
-        String username = principal.getName();  // 세션 기반 사용자 이름
-        commentService.deleteComment(id, username);
-        return ResponseEntity.noContent().build();
+        try {
+            String username = principal.getName();
+            commentService.deleteComment(id, username);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     // 대댓글 작성
     @PostMapping("/reply/{parentCommentId}")
-    public ResponseEntity<CommentDto> createReply(
+    public ResponseEntity<?> createReply(
             @PathVariable Long parentCommentId,
             @RequestBody CommentCreateRequest request,
             Principal principal) {
-        String username = principal.getName();
-        CommentDto result = commentService.createReply(parentCommentId, request, username);
-        return ResponseEntity.status(HttpStatus.CREATED).body(result);
+        try {
+            String username = principal.getName();
+            CommentDto result = commentService.createReply(parentCommentId, request, username);
+            return ResponseEntity.status(HttpStatus.CREATED).body(result);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 }

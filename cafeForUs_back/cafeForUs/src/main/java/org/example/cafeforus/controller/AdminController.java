@@ -3,7 +3,6 @@ package org.example.cafeforus.controller;
 import lombok.RequiredArgsConstructor;
 import org.example.cafeforus.dto.request.CategoryDto;
 import org.example.cafeforus.dto.response.PostAllDto;
-import org.example.cafeforus.dto.response.PostResponseDto;
 import org.example.cafeforus.dto.response.UserResponseDto;
 import org.example.cafeforus.entity.Category;
 import org.example.cafeforus.service.AdminService;
@@ -25,7 +24,6 @@ public class AdminController {
 
     @GetMapping("/all/user")
     public ResponseEntity<List<UserResponseDto>> getAllUsers() {
-        System.out.println("요청들어옴");
         List<UserResponseDto> users = adminService.getAllUsers();
         return ResponseEntity.ok(users);
     }
@@ -34,11 +32,18 @@ public class AdminController {
     public ResponseEntity<List<PostAllDto>> getAllPosts() {
         return ResponseEntity.ok(adminService.getAllPosts());
     }
+
     @DeleteMapping("/post/delete/{id}")
     public ResponseEntity<Void> deletePost(@PathVariable Long id) {
-        adminService.deletePost(id);
-        return ResponseEntity.noContent().build();
+        try {
+            adminService.deletePost(id);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
     }
+
 
     //카테고리 추가
     @PostMapping("/category/add")
@@ -54,7 +59,7 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         }
     }
-    // 카테고리 삭제 (관리자만 접근 가능)
+    // 카테고리 삭제
     @DeleteMapping("/category/delete/{id}")
     public ResponseEntity<?> deleteCategory(@PathVariable Long id, Principal principal) {
         try {

@@ -26,8 +26,14 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody SignupDto dto) {
-        userService.register(dto);
-        return ResponseEntity.ok("회원가입 완료");
+        try {
+            userService.register(dto);
+            return ResponseEntity.ok("회원가입 완료");
+        }catch (UsernameNotFoundException e) {
+            return ResponseEntity.ok(e.getMessage());
+        }
+
+
     }
 
     @PostMapping("/login")
