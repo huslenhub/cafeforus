@@ -2,7 +2,7 @@
 
 **CafeForUs** is a social content platform where users belonging to specific organizations can freely share and discuss coffee-related information and stories. It features strong admin and user control functionality such as user roles, content access restrictions by category, and user management tools.
 
-![Main Screenshot](./assets/main_screenshot.png)
+
 
 ---
 
