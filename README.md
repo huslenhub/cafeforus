@@ -85,10 +85,21 @@ cd cafeForUs_back
 
 ## 📸 Screenshots
 
+| Main  Page              |  User Main Page         | Admin Main Page         |
+| ----------------------- | ----------------------- | ----------------------- |
+| ![](./screenshot/main.png) | ![](./screenshot/basicMain.png) | ![](./screenshot/adminMain.png) |
+
 | Login Page              | Board                   | Admin Dashboard         |
 | ----------------------- | ----------------------- | ----------------------- |
-| ![](./assets/login.png) | ![](./assets/board.png) | ![](./assets/admin.png) |
+| ![](./screenshot/chat.png) | ![](./screenshot/login.png) | ![](./screenshot/post.png) |
 
+| Login Page              | Board                   | Admin Dashboard         |
+| ----------------------- | ----------------------- | ----------------------- |
+| ![](./screenshot/accessDenied.png) | ![](./screenshot/categoryManager.png) | ![](./screenshot/levelUpRequest.png) |
+
+| Login Page              | Board                   | Admin Dashboard         |
+| ----------------------- | ----------------------- | ----------------------- |
+| ![](./screenshot/userManager.png) | ![](./screenshot/postManager.png) | ![](./screenshot/) |
 ---
 
 ## 📅 Development Progress
