@@ -85,21 +85,21 @@ cd cafeForUs_back
 
 ## 📸 Screenshots
 
-| Main  Page              |  User Main Page         | Admin Main Page         |
-| ----------------------- | ----------------------- | ----------------------- |
-| ![](./screenshot/main.png) | ![](./screenshot/basicMain.png) | ![](./screenshot/adminMain.png) |
+ |  User main page         | Admin main page         |
+| ----------------------- | ----------------------- |
+ | ![](./screenshot/basicMain.png) | ![](./screenshot/adminMain.png) |
 
-| Login Page              | Board                   | Admin Dashboard         |
+| Chat              | Login                   | Post        |
 | ----------------------- | ----------------------- | ----------------------- |
 | ![](./screenshot/chat.png) | ![](./screenshot/login.png) | ![](./screenshot/post.png) |
 
-| Login Page              | Board                   | Admin Dashboard         |
+| AccesDenied page              | Category management                   | Level up request        |
 | ----------------------- | ----------------------- | ----------------------- |
 | ![](./screenshot/accessDenied.png) | ![](./screenshot/categoryManager.png) | ![](./screenshot/levelUpRequest.png) |
 
-| Login Page              | Board                   | Admin Dashboard         |
-| ----------------------- | ----------------------- | ----------------------- |
-| ![](./screenshot/userManager.png) | ![](./screenshot/postManager.png) | ![](./screenshot/) |
+| User management              | Post management                   |
+| ----------------------- | ----------------------- |
+| ![](./screenshot/userManager.png) | ![](./screenshot/postManager.png) | 
 ---
 
 ## 📅 Development Progress
@@ -113,14 +113,3 @@ cd cafeForUs_back
 
 ---
 
-## 👨‍💻 Developer Info
-
-- **Developer**: [Your Name]  
-- **GitHub**: [https://github.com/huslenhub](https://github.com/huslenhub)  
-- **Email**: [your@email.com](mailto:your@email.com)
-
----
-
-## 📄 License
-
-MIT License
