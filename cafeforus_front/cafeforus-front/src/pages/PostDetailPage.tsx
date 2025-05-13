@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/useAuth'; // 경로에 맞게 수정하세요
-import CommentForm from '../components/CommentForm';
-import CommentList from '../components/CommentList';
+import CommentForm from '../components/comments/CommentForm';
+import CommentList from '../components/comments/CommentList';
+import CommentsSection from '../components/comments/CommentSection';
 
 interface Post {
   id: number;
@@ -68,7 +69,7 @@ const PostDetailPage = () => {
   const numericPostId = parseInt(postId, 10);
 
   return (
-    <div className="max-w-3xl mx-auto p-8 mt-32 bg-white shadow-md rounded-lg">
+    <div className="max-w-3xl mx-auto p-8 bg-white shadow-md rounded-lg">
       <div className="mb-4 flex justify-between items-center text-gray-500 text-sm">
         <div className="text-sm text-gray-500 mb-2">
           {post.category.name} | 작성자: {post.author.username} | {new Date(post.createdAt).toLocaleString()} | 조회수: {post.views}
@@ -101,8 +102,7 @@ const PostDetailPage = () => {
       <div className="text-lg whitespace-pre-wrap">{post.content}</div>
 
       <div>
-        <CommentForm postId={numericPostId} onCommentAdded={ () => {}} />
-        <CommentList postId={numericPostId} /> 
+        <CommentsSection postId={numericPostId} />
       </div>
     </div>
   );

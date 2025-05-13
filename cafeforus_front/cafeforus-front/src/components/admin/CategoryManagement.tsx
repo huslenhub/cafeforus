@@ -1,14 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Pencil, Plus, Trash } from "lucide-react";
+import { Category } from "../../types/types";
 
-interface Category {
-  id: number;
-  name: string;
-  postCount?: number; //없을 때 무시 할 수 있게
-  minReadLevel: string;
-  minWriteLevel: string;
-}
 
 export default function CategoryManagement() {
   const [categories, setCategories] = useState<Category[]>([]);

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/useAuth';
+import { useAuth } from '../../context/useAuth';
 
 const Navbar = () => {
   const { user, logout, level } = useAuth();
@@ -36,6 +36,16 @@ const Navbar = () => {
               관리자 대시보드
             </Link>
           )}
+
+{/* ✅ 채팅 버튼 추가 */}
+{user && (
+    <Link
+      to="/chat"
+      className="text-yellow-300 font-semibold hover:underline"
+    >
+      채팅
+    </Link>
+  )}
 
           {user ? (
             <>

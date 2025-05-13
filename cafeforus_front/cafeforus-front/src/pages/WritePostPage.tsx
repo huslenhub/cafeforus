@@ -89,7 +89,7 @@ const WritePostPage = () => {
   };
 
   return (
-    <div className="p-8 max-w-xl mx-auto mt-20">
+    <div className="p-8 max-w-xl mx-auto">
       <h1 className="text-2xl font-bold mb-6">{state?.isEdit ? '글 수정' : '글쓰기'}</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">

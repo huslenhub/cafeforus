@@ -1,14 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Trash } from "lucide-react";
+import { Post } from "../../types/types";
 
-interface Post {
-  id: number;
-  title: string;
-  author: string;
-  view: number;
-  commentCount: number;
-}
 
 export default function PostManagement() {
   const [posts, setPosts] = useState<Post[]>([]);

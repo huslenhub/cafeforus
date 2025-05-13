@@ -1,3 +1,8 @@
+
+//authUtils,ts
+
+import { AuthUser } from '../types/types';
+
 const handleResponse = async (res: Response) => {
     const data = await res.json();
     console.log('서버 응답:', data);
@@ -5,7 +10,7 @@ const handleResponse = async (res: Response) => {
     return data;
   };
   
-  export const loginUser = async (username: string, password: string): Promise<{ username: string; level: string }> => {
+  export const loginUser = async (username: string, password: string): Promise<AuthUser> => {
     const res = await fetch('/api/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -14,7 +19,7 @@ const handleResponse = async (res: Response) => {
     });
     return await handleResponse(res);
   };
-  
+
   export const logoutUser = async (): Promise<void> => {
     const res = await fetch('/api/logout', {
       method: 'POST',
@@ -38,22 +43,14 @@ const handleResponse = async (res: Response) => {
     }
   };
   
-  export const checkLogin = async (): Promise<{ username: string; level: string } | null> => {
-    const res = await fetch('/api/me', {
-      method: 'GET',
-      credentials: 'include',
-    });
-  
-    if (res.status === 401) {
-      // 로그인하지 않은 상태 → 사용자 없음 처리
-      return null;
-    }
-  
-    if (!res.ok) {
-      const errorText = await res.text();
-      throw new Error(errorText || 'Unknown error');
-    }
-  
-    return await res.json();
-  };
+  export const checkLogin = async (): Promise<AuthUser | null> => {
+  const res = await fetch('/api/me', {
+    method: 'GET',
+    credentials: 'include',
+  });
+
+  if (res.status === 401) return null;
+  if (!res.ok) throw new Error(await res.text() || 'Unknown error');
+  return await res.json();
+};
   

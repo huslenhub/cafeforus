@@ -72,7 +72,7 @@ const CategoryPostsPage = () => {
   const canRead = level !== null && minReadLevel.includes(level);
 
   return (
-    <div className="p-8 max-w-xl mx-auto mt-32">
+    <div className="p-8 max-w-xl mx-auto">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">카테고리: {categoryName}의 글 목록</h1>
         {canWrite && (

@@ -1,9 +1,10 @@
-import { Comment } from './types';
+import { Comment } from '../../types/types';
 import axios from 'axios';
 import { useState } from 'react';
+
 interface Props {
   comment: Comment;
-  onUpdate?: () => void;
+  onUpdate: () => void;
 }
 
 const CommentItem = ({ comment, onUpdate }: Props) => {
@@ -11,12 +12,11 @@ const CommentItem = ({ comment, onUpdate }: Props) => {
   const [editedContent, setEditedContent] = useState(comment.content);
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [replyContent, setReplyContent] = useState('');
-  
-  
+
   const handleDelete = async () => {
     if (confirm('댓글을 삭제할까요?')) {
       await axios.delete(`/api/comments/${comment.id}`);
-      onUpdate ? onUpdate() : window.location.reload();
+      onUpdate();
     }
   };
 
@@ -25,7 +25,7 @@ const CommentItem = ({ comment, onUpdate }: Props) => {
       content: editedContent,
     });
     setIsEditing(false);
-    onUpdate ? onUpdate() : window.location.reload();
+    onUpdate();
   };
 
   const handleReplySubmit = async () => {
@@ -34,7 +34,7 @@ const CommentItem = ({ comment, onUpdate }: Props) => {
     });
     setReplyContent('');
     setShowReplyForm(false);
-    onUpdate ? onUpdate() : window.location.reload();
+    onUpdate();
   };
 
   return (
@@ -84,4 +84,3 @@ const CommentItem = ({ comment, onUpdate }: Props) => {
 };
 
 export default CommentItem;
-

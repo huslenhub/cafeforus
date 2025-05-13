@@ -35,7 +35,7 @@ const SearchPage = () => {
   }, [query, filter]); // 필터가 변경될 때마다 새로 요청
 
   return (
-    <div className="p-4 mt-28">
+    <div className="p-4">
       <h2 className="text-2xl font-bold mb-4">🔍 "{query}" 검색 결과</h2>
 
       {/* 검색 필터 선택 */}

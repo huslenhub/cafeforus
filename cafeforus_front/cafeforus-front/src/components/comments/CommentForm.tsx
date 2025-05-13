@@ -13,7 +13,7 @@ const CommentForm = ({ postId, onCommentAdded }: Props) => {
     e.preventDefault();
     await axios.post('/api/comments/', { postId, content });
     setContent('');
-    onCommentAdded();  // 댓글 새로고침 트리거
+    onCommentAdded();  // 부모에게 알림
   };
 
   return (

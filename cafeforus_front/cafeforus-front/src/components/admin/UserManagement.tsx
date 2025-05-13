@@ -1,16 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios, { AxiosError } from "axios";
-
-// 사용자 인터페이스 정의
-interface User {
-  id: number;
-  username: string;
-  email: string;
-  level: string;
-  role: string;
-  postCount: number;
-  commentCount: number;
-}
+import { User } from "../../types/types";
 
 export default function UserManagement() {
   const [users, setUsers] = useState<User[]>([]);
